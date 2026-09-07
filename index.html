@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sri Lakshmi Grocery Shop</title>
+
+<style>
+body {
+    font-family: Arial;
+    margin: 0;
+    background: #f2f2f2;
+}
+
+header {
+    background: green;
+    color: white;
+    text-align: center;
+    padding: 15px;
+}
+
+.shop-info, .product, #cart {
+    background: white;
+    margin: 10px;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.search {
+    width: 90%;
+    padding: 12px;
+    margin: 15px auto;
+    display: block;
+    box-sizing: border-box;
+}
+
+button {
+    background: green;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 7px;
+    margin: 3px;
+}
+
+.clear {
+    background: red;
+}
+
+select {
+    padding: 10px;
+    width: 90%;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🛒 Sri Lakshmi Grocery Shop</h1>
+<p>Fresh groceries at good prices 😊</p>
+</header>
+
+<div class="shop-info">
+<h2>🏪 Shop Information</h2>
+<p>📍 Your shop address</p>
+<p>🕐 Open: 8:00 AM - 9:00 PM</p>
+<p>📞 Contact: Your Uncle's Number</p>
+</div>
+
+<input
+class="search"
+id="searchBox"
+placeholder="🔎 Search products..."
+oninput="showProducts()"
+>
+
+<div id="productList"></div>
+
+<div id="cart">
+
+<h2>🛒 My Cart</h2>
+
+<div id="cartItems">
+Your cart is empty.
+</div>
+
+<h3 id="total">Total: ₹0</h3>
+
+<h3>🚚 Delivery Option</h3>
+
+<select id="deliveryOption">
+<option>🏠 Home Delivery</option>
+<option>🏪 Store Pickup</option>
+</select>
+
+<br><br>
+
+<button class="clear" onclick="clearCart()">
+🗑️ Clear Cart
+</button>
+
+<button onclick="checkout()">
+✅ Checkout
+</button>
+<button onclick="sendWhatsApp()">
+    📱 Order on WhatsApp
+</button>
+
+</div>
+
+<script>
+
+let products = JSON.parse(
+localStorage.getItem("products") || "[]"
+);
+
+function showProducts() {
+
+    let list = document.getElementById("productList");
+
+    let search = document
+        .getElementById("searchBox")
+        .value
+        .toLowerCase();
+
+    list.innerHTML = "";
+
+    if (products.length === 0) {
+        list.innerHTML =
+        "<div class='product'><h2>No products found</h2></div>";
+        return;
+    }
+
+    products.forEach(function(product, index) {
+
+        if (product.name.toLowerCase().includes(search)) {
+
+            list.innerHTML += `
+            <div class="product">
+
+                <h2>🛒 ${product.name}</h2>
+
+                <p>🏷️ ${product.category || "General"}</p>
+
+                <p>💰 ₹${product.price}</p>
+
+                <button onclick="addToCart(${index})">
+                    ➕ Add to Cart
+                </button>
+
+            </div>
+            `;
+
+        }
+
+    });
+
+}
+
+let cart = [];
+
+function addToCart(index) {
+
+    let product = products[index];
+
+    let item = cart.find(function(x) {
+        return x.name === product.name;
+    });
+
+    if (item) {
+        item.quantity++;
+    } else {
+
+        cart.push({
+            name: product.name,
+            price: Number(product.price),
+            quantity: 1
+        });
+
+    }
+
+    showCart();
+}
+
+function showCart() {
+
+    let items = document.getElementById("cartItems");
+    let total = document.getElementById("total");
+
+    if (cart.length === 0) {
+
+        items.innerText = "Your cart is empty.";
+        total.innerText = "Total: ₹0";
+
+        return;
+    }
+
+    items.innerHTML = "";
+
+    let sum = 0;
+
+    cart.forEach(function(item, index) {
+
+        let itemTotal = item.price * item.quantity;
+
+        sum += itemTotal;
+
+        items.innerHTML += `
+        <p>
+            <b>${item.name}</b>
+            × ${item.quantity}
+            = ₹${itemTotal}
+
+            <br>
+
+            <button onclick="decrease(${index})">−</button>
+
+            <button onclick="increase(${index})">+</button>
+        </p>
+        `;
+
+    });
+
+    total.innerText = "Total: ₹" + sum;
+
+}
+
+function increase(index) {
+
+    cart[index].quantity++;
+
+    showCart();
+
+}
+
+function decrease(index) {
+
+    cart[index].quantity--;
+
+    if (cart[index].quantity <= 0) {
+        cart.splice(index, 1);
+    }
+
+    showCart();
+
+}
+
+function clearCart() {
+
+    cart = [];
+
+    showCart();
+
+}
+
+function checkout() {
+
+    if (cart.length === 0) {
+
+        alert("Please add a product first.");
+
+        return;
+    }
+
+    let delivery =
+    document.getElementById("deliveryOption").value;
+
+    alert(
+        "✅ Your order is ready!\n\n" +
+        "🚚 " + delivery
+    );
+
+}
+
+showProducts();
+function sendWhatsApp() {
+
+    if (cart.length === 0) {
+        alert("Please add a product first.");
+        return;
+    }
+
+    let message = "🛒 Grocery Order\n\n";
+
+    cart.forEach(function(item) {
+        message += item.name + " × " + item.quantity +
+                   " = ₹" +
+                   (item.price * item.quantity) +
+                   "\n";
+    });
+
+    message += "\n" + document.getElementById("total").innerText;
+
+    let delivery =
+        document.getElementById("deliveryOption").value;
+
+    message += "\n🚚 " + delivery;
+
+    let phone = "9176662636";
+
+    window.open(
+        "https://wa.me/" + phone +
+        "?text=" + encodeURIComponent(message),
+        "_blank"
+    );
+}
+</script>
+
+</body>
+</html>

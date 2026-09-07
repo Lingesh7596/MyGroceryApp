@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Grocery Admin</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            margin: 0;
+            background: #f2f2f2;
+        }
+
+        header {
+            background: green;
+            color: white;
+            text-align: center;
+            padding: 15px;
+        }
+
+        .box, .product {
+            background: white;
+            margin: 10px;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        input {
+            padding: 10px;
+            margin: 5px;
+            width: 90%;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: green;
+            color: white;
+            border: 0;
+            padding: 10px 15px;
+            border-radius: 7px;
+            margin: 4px;
+        }
+
+        .delete {
+            background: red;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>👨‍💼 Grocery Admin</h1>
+</header>
+
+<div class="box">
+    <h2>➕ Add Product</h2>
+
+    <input id="name" placeholder="Product name">
+    <input id="price" type="number" placeholder="Price">
+    <input id="category" placeholder="Category">
+
+    <button onclick="addProduct()">Add Product</button>
+</div>
+
+<h2 style="text-align:center;">📦 Products</h2>
+
+<div id="productList"></div>
+
+<script>
+
+let products = JSON.parse(
+    localStorage.getItem("products") || "[]"
+);
+
+function saveProducts() {
+    localStorage.setItem("products", JSON.stringify(products));
+}
+
+function showProducts() {
+
+    let list = document.getElementById("productList");
+
+    list.innerHTML = "";
+
+    products.forEach(function(product, index) {
+
+        list.innerHTML += `
+            <div class="product">
+                <h2>${product.name}</h2>
+                <p>Category: ${product.category || "General"}</p>
+                <p>Price: ₹${product.price}</p>
+
+                <button onclick="editProduct(${index})">
+                    ✏️ Edit
+                </button>
+
+                <button class="delete" onclick="deleteProduct(${index})">
+                    🗑️ Delete
+                </button>
+            </div>
+        `;
+    });
+}
+
+function addProduct() {
+
+    let name = document.getElementById("name").value;
+    let price = document.getElementById("price").value;
+    let category = document.getElementById("category").value;
+
+    if (name === "" || price === "") {
+        alert("Please enter product name and price.");
+        return;
+    }
+
+    products.push({
+        name: name,
+        price: Number(price),
+        category: category
+    });
+
+    saveProducts();
+
+    document.getElementById("name").value = "";
+    document.getElementById("price").value = "";
+    document.getElementById("category").value = "";
+
+    showProducts();
+}
+
+function editProduct(index) {
+
+    let newName = prompt(
+        "Enter new product name:",
+        products[index].name
+    );
+
+    if (newName === null || newName === "") {
+        return;
+    }
+
+    let newPrice = prompt(
+        "Enter new price:",
+        products[index].price
+    );
+
+    if (newPrice === null || newPrice === "") {
+        return;
+    }
+
+    products[index].name = newName;
+    products[index].price = Number(newPrice);
+
+    saveProducts();
+    showProducts();
+}
+
+function deleteProduct(index) {
+
+    let answer = confirm(
+        "Delete " + products[index].name + "?"
+    );
+
+    if (answer) {
+        products.splice(index, 1);
+        saveProducts();
+        showProducts();
+    }
+}
+
+showProducts();
+
+</script>
+
+</body>
+</html>
