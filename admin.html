@@ -1,172 +1,329 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Grocery Admin</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        body {
-            font-family: Arial;
-            margin: 0;
-            background: #f2f2f2;
-        }
+  <title>Grocery Shop Admin</title>
 
-        header {
-            background: green;
-            color: white;
-            text-align: center;
-            padding: 15px;
-        }
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-        .box, .product {
-            background: white;
-            margin: 10px;
-            padding: 15px;
-            border-radius: 10px;
-        }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f4;
+      color: #222;
+    }
 
-        input {
-            padding: 10px;
-            margin: 5px;
-            width: 90%;
-            box-sizing: border-box;
-        }
+    header {
+      background: linear-gradient(135deg, #1b5e20, #43a047);
+      color: white;
+      text-align: center;
+      padding: 25px 15px;
+    }
 
-        button {
-            background: green;
-            color: white;
-            border: 0;
-            padding: 10px 15px;
-            border-radius: 7px;
-            margin: 4px;
-        }
+    header h1 {
+      margin: 0;
+    }
 
-        .delete {
-            background: red;
-        }
-    </style>
+    .container {
+      max-width: 700px;
+      margin: auto;
+      padding: 18px;
+    }
+
+    .box {
+      background: white;
+      padding: 18px;
+      margin: 15px 0;
+      border-radius: 14px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    }
+
+    input,
+    button {
+      width: 100%;
+      padding: 13px;
+      margin: 6px 0;
+      font-size: 16px;
+      border-radius: 9px;
+    }
+
+    input {
+      border: 1px solid #ddd;
+    }
+
+    button {
+      border: none;
+      background: #2e7d32;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .delete {
+      background: #c62828;
+    }
+
+    .edit {
+      background: #1565c0;
+    }
+
+    .product {
+      border-bottom: 1px solid #eee;
+      padding: 15px 0;
+    }
+
+    .product:last-child {
+      border-bottom: none;
+    }
+
+    .product-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .product-buttons button {
+      width: 50%;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: #666;
+    }
+  </style>
 </head>
 
 <body>
 
 <header>
-    <h1>👨‍💼 Grocery Admin</h1>
+  <h1>🛠️ Grocery Shop Admin</h1>
+  <p>Manage your products</p>
 </header>
 
-<div class="box">
+<div class="container">
+
+  <div class="box">
+
     <h2>➕ Add Product</h2>
 
-    <input id="name" placeholder="Product name">
-    <input id="price" type="number" placeholder="Price">
-    <input id="category" placeholder="Category">
+    <input
+      type="text"
+      id="productName"
+      placeholder="Product name"
+    >
 
-    <button onclick="addProduct()">Add Product</button>
+    <input
+      type="number"
+      id="productPrice"
+      placeholder="Price in ₹"
+    >
+
+    <input
+      type="text"
+      id="productEmoji"
+      placeholder="Emoji e.g. 🍚"
+    >
+
+    <button onclick="addProduct()">
+      Add Product
+    </button>
+
+  </div>
+
+  <div class="box">
+
+    <h2>📦 Products</h2>
+
+    <div id="productList"></div>
+
+  </div>
+
 </div>
 
-<h2 style="text-align:center;">📦 Products</h2>
-
-<div id="productList"></div>
+<footer>
+  Grocery Shop Admin Panel
+</footer>
 
 <script>
 
-let products = JSON.parse(
-    localStorage.getItem("products") || "[]"
-);
+let products =
+  JSON.parse(localStorage.getItem("products") || "[]");
+
+if (products.length === 0) {
+
+  products = [
+    {
+      id: 1,
+      name: "Rice",
+      price: 60,
+      emoji: "🍚"
+    },
+    {
+      id: 2,
+      name: "Sugar",
+      price: 45,
+      emoji: "🍬"
+    },
+    {
+      id: 3,
+      name: "Toor Dal",
+      price: 120,
+      emoji: "🫘"
+    }
+  ];
+
+  saveProducts();
+}
 
 function saveProducts() {
-    localStorage.setItem("products", JSON.stringify(products));
+
+  localStorage.setItem(
+    "products",
+    JSON.stringify(products)
+  );
 }
 
 function showProducts() {
 
-    let list = document.getElementById("productList");
+  let list =
+    document.getElementById("productList");
 
-    list.innerHTML = "";
+  list.innerHTML = "";
 
-    products.forEach(function(product, index) {
+  products.forEach(function(product) {
 
-        list.innerHTML += `
-            <div class="product">
-                <h2>${product.name}</h2>
-                <p>Category: ${product.category || "General"}</p>
-                <p>Price: ₹${product.price}</p>
+    list.innerHTML += `
 
-                <button onclick="editProduct(${index})">
-                    ✏️ Edit
-                </button>
+      <div class="product">
 
-                <button class="delete" onclick="deleteProduct(${index})">
-                    🗑️ Delete
-                </button>
-            </div>
-        `;
-    });
+        <h3>
+          ${product.emoji} ${product.name}
+        </h3>
+
+        <p>
+          Price: ₹${product.price}
+        </p>
+
+        <div class="product-buttons">
+
+          <button
+            class="edit"
+            onclick="editProduct(${product.id})"
+          >
+            ✏️ Edit
+          </button>
+
+          <button
+            class="delete"
+            onclick="deleteProduct(${product.id})"
+          >
+            🗑️ Delete
+          </button>
+
+        </div>
+
+      </div>
+    `;
+  });
 }
 
 function addProduct() {
 
-    let name = document.getElementById("name").value;
-    let price = document.getElementById("price").value;
-    let category = document.getElementById("category").value;
+  let name =
+    document.getElementById("productName").value.trim();
 
-    if (name === "" || price === "") {
-        alert("Please enter product name and price.");
-        return;
-    }
+  let price =
+    document.getElementById("productPrice").value;
 
-    products.push({
-        name: name,
-        price: Number(price),
-        category: category
+  let emoji =
+    document.getElementById("productEmoji").value.trim();
+
+  if (!name || !price) {
+
+    alert("Please enter product name and price.");
+
+    return;
+  }
+
+  if (!emoji) {
+    emoji = "🛒";
+  }
+
+  products.push({
+
+    id: Date.now(),
+
+    name: name,
+
+    price: Number(price),
+
+    emoji: emoji
+
+  });
+
+  saveProducts();
+
+  showProducts();
+
+  document.getElementById("productName").value = "";
+
+  document.getElementById("productPrice").value = "";
+
+  document.getElementById("productEmoji").value = "";
+
+  alert("Product added!");
+}
+
+function deleteProduct(id) {
+
+  let answer =
+    confirm("Delete this product?");
+
+  if (!answer) return;
+
+  products =
+    products.filter(function(product) {
+      return product.id !== id;
     });
 
-    saveProducts();
+  saveProducts();
 
-    document.getElementById("name").value = "";
-    document.getElementById("price").value = "";
-    document.getElementById("category").value = "";
-
-    showProducts();
+  showProducts();
 }
 
-function editProduct(index) {
+function editProduct(id) {
 
-    let newName = prompt(
-        "Enter new product name:",
-        products[index].name
-    );
+  let product =
+    products.find(function(product) {
+      return product.id === id;
+    });
 
-    if (newName === null || newName === "") {
-        return;
-    }
+  if (!product) return;
 
-    let newPrice = prompt(
-        "Enter new price:",
-        products[index].price
-    );
+  let newName =
+    prompt("Product name:", product.name);
 
-    if (newPrice === null || newPrice === "") {
-        return;
-    }
+  if (newName === null) return;
 
-    products[index].name = newName;
-    products[index].price = Number(newPrice);
+  let newPrice =
+    prompt("Price:", product.price);
 
-    saveProducts();
-    showProducts();
-}
+  if (newPrice === null) return;
 
-function deleteProduct(index) {
+  product.name = newName;
 
-    let answer = confirm(
-        "Delete " + products[index].name + "?"
-    );
+  product.price = Number(newPrice);
 
-    if (answer) {
-        products.splice(index, 1);
-        saveProducts();
-        showProducts();
-    }
+  saveProducts();
+
+  showProducts();
+
+  alert("Product updated!");
 }
 
 showProducts();
