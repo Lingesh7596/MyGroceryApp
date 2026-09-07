@@ -3,68 +3,154 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Sri Lakshmi Grocery Shop</title>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
-      background: #f5f5f5;
+      font-family: Arial, sans-serif;
+      background: #f6f8f6;
+      color: #222;
     }
 
     header {
-      background: #2e7d32;
+      background: linear-gradient(135deg, #1b5e20, #43a047);
       color: white;
-      padding: 20px;
+      padding: 28px 18px;
       text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      font-size: 15px;
     }
 
     .shop-info {
       background: white;
-      padding: 15px;
+      padding: 14px;
       text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
     .container {
-      max-width: 700px;
+      max-width: 850px;
       margin: auto;
-      padding: 15px;
+      padding: 18px;
     }
 
-    input, select, button {
+    .search-box {
+      background: white;
+      padding: 14px;
+      border-radius: 14px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    input,
+    select,
+    button {
       width: 100%;
-      padding: 12px;
+      padding: 13px;
       margin: 6px 0;
-      box-sizing: border-box;
+      border-radius: 9px;
       font-size: 16px;
     }
 
-    .product, .cart {
+    input,
+    select {
+      border: 1px solid #ddd;
       background: white;
-      padding: 15px;
-      margin: 10px 0;
-      border-radius: 10px;
+    }
+
+    h2 {
+      margin-top: 25px;
+    }
+
+    .product {
+      background: white;
+      padding: 18px;
+      margin: 12px 0;
+      border-radius: 14px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.07);
+    }
+
+    .product h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    .price {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
     }
 
     button {
+      border: none;
       background: #2e7d32;
       color: white;
-      border: none;
-      border-radius: 7px;
       cursor: pointer;
+      font-weight: bold;
     }
 
-    .remove {
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .cart {
+      background: white;
+      padding: 18px;
+      border-radius: 14px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.07);
+    }
+
+    .cart-item {
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .quantity-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .quantity-buttons button {
+      width: 50px;
+      padding: 8px;
+    }
+
+    .clear {
       background: #c62828;
     }
 
     .whatsapp {
       background: #25D366;
+      font-size: 17px;
+      padding: 15px;
     }
 
     .total {
-      font-size: 20px;
+      font-size: 21px;
       font-weight: bold;
+      margin: 18px 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: #666;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -73,37 +159,42 @@
 
 <header>
   <h1>🛒 Sri Lakshmi Grocery Shop</h1>
-  <p>Quality groceries at your doorstep</p>
+  <p>Fresh groceries • Easy ordering • Friendly service</p>
 </header>
 
 <div class="shop-info">
-  <p>📍 Main Road, Your Town</p>
-  <p>🕒 8:00 AM - 9:00 PM</p>
+  <div>📍 Main Road, Your Town</div>
+  <div>🕒 8:00 AM - 9:00 PM</div>
 </div>
 
 <div class="container">
 
-  <input
-    type="text"
-    id="search"
-    placeholder="🔎 Search for a product..."
-    oninput="showProducts()"
-  >
+  <div class="search-box">
+    <input
+      type="text"
+      id="search"
+      placeholder="🔎 Search groceries..."
+      oninput="showProducts()"
+    >
+  </div>
 
-  <h2>🛍️ Products</h2>
+  <h2>🛍️ Our Products</h2>
 
   <div id="products"></div>
 
   <h2>🛒 Your Cart</h2>
 
   <div class="cart">
-    <div id="cartItems">Your cart is empty.</div>
 
-    <p class="total">
+    <div id="cartItems">
+      Your cart is empty.
+    </div>
+
+    <div class="total">
       Total: ₹<span id="total">0</span>
-    </p>
+    </div>
 
-    <button class="remove" onclick="clearCart()">
+    <button class="clear" onclick="clearCart()">
       🗑️ Clear Cart
     </button>
 
@@ -115,9 +206,14 @@
     <button class="whatsapp" onclick="sendWhatsApp()">
       📱 Order on WhatsApp
     </button>
+
   </div>
 
 </div>
+
+<footer>
+  Thank you for shopping with us! ❤️
+</footer>
 
 <script>
 
@@ -147,12 +243,17 @@ function showProducts() {
 
     productBox.innerHTML += `
       <div class="product">
+
         <h3>${product.emoji} ${product.name}</h3>
-        <p>₹${product.price}</p>
+
+        <div class="price">
+          ₹${product.price}
+        </div>
 
         <button onclick="addToCart(${product.id})">
           ➕ Add to Cart
         </button>
+
       </div>
     `;
   });
@@ -165,8 +266,11 @@ function addToCart(id) {
   });
 
   if (item) {
+
     item.quantity++;
+
   } else {
+
     let product = products.find(function(product) {
       return product.id === id;
     });
@@ -193,6 +297,7 @@ function changeQuantity(id, amount) {
   item.quantity += amount;
 
   if (item.quantity <= 0) {
+
     cart = cart.filter(function(product) {
       return product.id !== id;
     });
@@ -209,8 +314,11 @@ function showCart() {
   let total = 0;
 
   if (cart.length === 0) {
+
     cartBox.innerHTML = "Your cart is empty.";
+
     document.getElementById("total").innerText = "0";
+
     return;
   }
 
@@ -218,28 +326,35 @@ function showCart() {
 
   cart.forEach(function(item) {
 
-    let itemTotal = item.price * item.quantity;
+    let itemTotal =
+      item.price * item.quantity;
 
     total += itemTotal;
 
     cartBox.innerHTML += `
-      <div>
+
+      <div class="cart-item">
+
         <b>${item.name}</b>
+
         <br>
+
         ₹${item.price} × ${item.quantity}
         = ₹${itemTotal}
 
-        <br>
+        <div class="quantity-buttons">
 
-        <button onclick="changeQuantity(${item.id}, -1)">
-          −
-        </button>
+          <button onclick="changeQuantity(${item.id}, -1)">
+            −
+          </button>
 
-        <button onclick="changeQuantity(${item.id}, 1)">
-          +
-        </button>
+          <button onclick="changeQuantity(${item.id}, 1)">
+            +
+          </button>
+
+        </div>
+
       </div>
-      <hr>
     `;
   });
 
@@ -256,20 +371,24 @@ function clearCart() {
 function sendWhatsApp() {
 
   if (cart.length === 0) {
+
     alert("Please add some products first.");
+
     return;
   }
 
   let delivery =
     document.getElementById("deliveryOption").value;
 
-  let message = "🛒 Grocery Order\n\n";
+  let message =
+    "🛒 Grocery Order\n\n";
 
   let total = 0;
 
   cart.forEach(function(item) {
 
-    let itemTotal = item.price * item.quantity;
+    let itemTotal =
+      item.price * item.quantity;
 
     total += itemTotal;
 
@@ -288,12 +407,6 @@ function sendWhatsApp() {
     "\nDelivery: " +
     delivery;
 
-  /*
-    IMPORTANT:
-    Put your uncle's WhatsApp number here.
-    Use country code + number, without + or spaces.
-  */
-
   let phone = "YOUR_PHONE_NUMBER";
 
   window.open(
@@ -306,6 +419,7 @@ function sendWhatsApp() {
 }
 
 showProducts();
+
 showCart();
 
 </script>
